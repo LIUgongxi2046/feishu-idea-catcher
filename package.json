@@ -1,0 +1,33 @@
+{
+  "name": "feishu-idea-catcher",
+  "version": "0.1.0",
+  "description": "Capture ideas from a Feishu bot, generate Codex CEO review reports, save them to Obsidian, export PDFs, and send them back to Feishu.",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "feishu",
+    "lark",
+    "obsidian",
+    "codex",
+    "automation",
+    "idea-catcher",
+    "pdf"
+  ],
+  "scripts": {
+    "doctor": "node scripts/doctor.mjs",
+    "push:vercel-env": "node scripts/push-vercel-env.mjs",
+    "worker": "node scripts/worker.mjs",
+    "worker:feishu": "node scripts/feishu-ws-worker.mjs",
+    "listener:feishu": "node scripts/feishu-ws-worker.mjs",
+    "worker:queue": "node scripts/worker.mjs",
+    "worker:once": "node scripts/worker.mjs --once",
+    "dev:api": "vercel dev",
+    "test:local": "node scripts/process-local-idea.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@larksuiteoapi/node-sdk": "^1.66.1"
+  }
+}

@@ -1,0 +1,12 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.vercel/
+state/
+logs/
+tmp/
+*.log
+*.pdf
+*.html
+.DS_Store

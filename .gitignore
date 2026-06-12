@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Local secrets and machine-specific config
+.env
+.env.*
+!.env.example
+.vercel/
+
+# Runtime state and logs
+state/
+logs/
+tmp/
+*.log
+
+# Generated local artifacts
+*.pdf
+*.html
+
+# macOS
+.DS_Store
