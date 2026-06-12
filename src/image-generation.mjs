@@ -67,7 +67,7 @@ function generateWithCodexImageGen({ prompt, outputPath, ideaId }) {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'codex-imagegen-'));
   const resultPath = path.join(tmpDir, 'result.txt');
   const tempImagePath = path.join(tmpDir, 'whiteboard.png');
-  const imagePrompt = `Use $haonan-image-whiteboard.
+  const imagePrompt = `Use the bundled whiteboard style guide at skills/haonan-image-whiteboard/SKILL.md if available.
 
 请直接使用 Codex 内置 image_gen / image2 能力生成一张白板手绘信息图。
 
@@ -75,6 +75,8 @@ function generateWithCodexImageGen({ prompt, outputPath, ideaId }) {
 - 必须使用内置图片生成能力，不要使用 OpenAI API key，不要调用外部图片 API。
 - 不要只输出提示词。
 - 不要提前判断“非交互不可用”。必须先尝试调用 image_gen / image2。
+- 图片要解释用户提交的想法本身，不要解释飞书、Codex、Obsidian 这条自动化链路，除非用户的想法就是这条链路。
+- 不要加入个人姓名、账号、私有路径、水印或签名；只有图片提示词明确包含署名时才可以加入。
 - 生成图片后，优先把 PNG 保存或复制到这个临时路径：${tempImagePath}
 - 如果不能直接保存到临时路径，请在 $HOME/.codex/generated_images 下定位本次最新图片，并复制到临时路径。
 - 最终回复只写图片路径。

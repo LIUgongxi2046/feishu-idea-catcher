@@ -116,6 +116,7 @@ flowchart TD
 
 - 使用本地 Codex app/CLI 已登录状态。
 - 不需要 `OPENAI_API_KEY`。
+- 会优先参考仓库内置的 `skills/haonan-image-whiteboard/SKILL.md` 风格规则。
 - 先生成到临时 PNG。
 - 再由主 worker 复制到 Obsidian assets 目录。
 
@@ -357,6 +358,14 @@ IMAGE_ENGINE=codex
 ```
 
 这会使用本地 Codex image generation，不需要 OpenAI API key。
+
+仓库内置了一个干净版白板图 skill：
+
+```text
+skills/haonan-image-whiteboard/SKILL.md
+```
+
+它定义了白底、手绘线条、中文大字、手机可读、无默认个人署名的视觉规则。worker 调用 Codex 生图时会要求优先参考这个文件。
 
 如果你想禁用图片：
 

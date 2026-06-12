@@ -10,7 +10,7 @@
 - Upstash Redis 队列，避免飞书回调超时
 - Codex CLI 生成中文 CEO Review 报告
 - Codex web search 做轻量竞品/先行者扫描
-- Codex image generation 生成白板风格配图
+- Codex image generation 结合内置白板图 skill 生成配图
 - Obsidian 自动归档 Markdown
 - Chrome headless 自动导出 PDF
 - 飞书官方文件 API 回传 PDF
@@ -140,6 +140,16 @@ The title is automatically rewritten into a short product-style title instead of
 - `PDF_RENDERER=chrome`: fully automatic PDF export.
 - `PDF_RENDERER=obsidian`: write Markdown only and return an Obsidian link.
 - `WHITEBOARD_SIGNATURE`: optional visible signature on generated whiteboard images.
+
+## Bundled Whiteboard Skill
+
+The repository includes a sanitized Codex skill at:
+
+```text
+skills/haonan-image-whiteboard/SKILL.md
+```
+
+The worker asks Codex to use this style guide when generating report images. The bundled version contains no private keys, local paths, or personal signature. Set `WHITEBOARD_SIGNATURE` only if you want your own visible signature on generated images.
 
 ## Local Test
 
