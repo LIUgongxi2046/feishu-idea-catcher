@@ -400,33 +400,62 @@ PDF_RENDERER=chrome
 
 如果 Chrome 在受限环境里报 `SIGABRT`，请在普通终端、LaunchAgent 或系统服务里运行 worker，不要放在严格沙箱里。
 
-## 13. macOS 开机自启
+## 13. macOS 常驻与定时启动
 
-可以参考：
-
-```text
-templates/launchagent.plist
-```
-
-把其中的：
-
-```text
-/absolute/path/to/feishu-idea-catcher
-```
-
-替换成你的项目路径，然后放到：
-
-```text
-~/Library/LaunchAgents/
-```
-
-加载：
+临时使用时，可以开两个终端分别运行：
 
 ```bash
-launchctl load ~/Library/LaunchAgents/com.example.feishu-idea-catcher.worker.plist
+npm run listener:feishu
+npm run worker:queue
 ```
 
-listener 也可以用同样方式创建一个 LaunchAgent，把 `worker:queue` 改成 `listener:feishu`。
+如果要让 Codex 自动化、系统定时任务或其他调度器每天自动启动/停止，推荐使用项目内置的 launchd 包装命令：
+
+```bash
+npm run launchd:start
+npm run launchd:status
+npm run launchd:stop
+```
+
+原因是：Codex 自动化或某些调度器可能运行在受限环境中，直接派生长期联网进程时，飞书和 Upstash 可能遇到 DNS/网络限制。`launchd:start` 会把 listener 和 worker 注册成当前 macOS 用户的 LaunchAgent，由系统用户服务承载长期运行。
+
+生成的 plist 位于：
+
+```text
+~/Library/LaunchAgents/com.feishu-idea-catcher.listener.plist
+~/Library/LaunchAgents/com.feishu-idea-catcher.worker.plist
+```
+
+日志位于：
+
+```text
+state/launchd-listener.out.log
+state/launchd-listener.err.log
+state/launchd-worker.out.log
+state/launchd-worker.err.log
+```
+
+如果同一台 Mac 上有多个项目副本，可以用环境变量换一个 label 前缀，避免 LaunchAgent 名称冲突：
+
+```bash
+LAUNCHD_LABEL_PREFIX=com.example.my-idea-catcher npm run launchd:start
+```
+
+如果 Node 不在常见路径，或你想固定 Node 可执行文件：
+
+```bash
+LAUNCHD_NODE_BIN=/opt/homebrew/bin/node npm run launchd:start
+```
+
+Codex 自动化可以配置为：
+
+```text
+每天早上启动：运行 npm run launchd:start，等待 5 秒，再运行 npm run launchd:status，并总结 listener/worker 状态和 PID。
+
+每天晚上停止：运行 npm run launchd:stop，等待 3 秒，再运行 npm run launchd:status，并总结是否已经 not_loaded/stopped。
+```
+
+`local:start` / `local:stop` / `local:status` 也保留给普通终端手动调试使用，但定时自动化更推荐 `launchd:*`。
 
 ## 14. 可选 Vercel HTTP 模式
 

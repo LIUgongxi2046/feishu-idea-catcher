@@ -82,6 +82,27 @@ npm run worker:queue
 
 Now send a text message to your Feishu bot.
 
+### Optional: Scheduled Local Startup
+
+If you want Codex automations or another scheduler to start and stop the local processes, prefer the macOS launchd commands:
+
+```bash
+npm run launchd:start
+npm run launchd:status
+npm run launchd:stop
+```
+
+This registers the listener and queue worker as user LaunchAgents under `~/Library/LaunchAgents/`, with logs in `state/launchd-*.log`. This is more reliable than letting a sandboxed scheduler directly spawn long-running network processes.
+
+For Codex automations, use prompts like:
+
+```text
+Start: run npm run launchd:start, wait 5 seconds, then run npm run launchd:status and summarize listener/worker status and PIDs.
+Stop: run npm run launchd:stop, wait 3 seconds, then run npm run launchd:status and summarize whether services are not_loaded/stopped.
+```
+
+If you need to avoid LaunchAgent label conflicts with another checkout, set `LAUNCHD_LABEL_PREFIX` before running the command.
+
 ## Feishu Setup
 
 Use a Feishu/Lark self-built app, not a simple incoming webhook bot.

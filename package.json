@@ -22,7 +22,14 @@
     "worker:queue": "node scripts/worker.mjs",
     "worker:once": "node scripts/worker.mjs --once",
     "dev:api": "vercel dev",
-    "test:local": "node scripts/process-local-idea.mjs"
+    "test:local": "node scripts/process-local-idea.mjs",
+    "local:start": "node scripts/local-processes.mjs start",
+    "local:stop": "node scripts/local-processes.mjs stop",
+    "local:status": "node scripts/local-processes.mjs status",
+    "launchd:start": "node scripts/launchd-control.mjs start",
+    "launchd:stop": "node scripts/launchd-control.mjs stop",
+    "launchd:status": "node scripts/launchd-control.mjs status",
+    "launchd:install": "node scripts/launchd-control.mjs install"
   },
   "engines": {
     "node": ">=20"
