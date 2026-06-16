@@ -29,7 +29,13 @@
     "launchd:start": "node scripts/launchd-control.mjs start",
     "launchd:stop": "node scripts/launchd-control.mjs stop",
     "launchd:status": "node scripts/launchd-control.mjs status",
-    "launchd:install": "node scripts/launchd-control.mjs install"
+    "launchd:install": "node scripts/launchd-control.mjs install",
+    "launchd:schedule:install": "node scripts/launchd-schedule.mjs install",
+    "launchd:schedule:status": "node scripts/launchd-schedule.mjs status",
+    "launchd:schedule:uninstall": "node scripts/launchd-schedule.mjs uninstall",
+    "launchd:schedule:test-start": "node scripts/launchd-schedule.mjs test-start",
+    "launchd:schedule:test-stop": "node scripts/launchd-schedule.mjs test-stop",
+    "launchd:schedule:runner": "node scripts/launchd-schedule-runner.mjs"
   },
   "engines": {
     "node": ">=20"

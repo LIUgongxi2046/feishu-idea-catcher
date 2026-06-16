@@ -7,20 +7,18 @@ import { spawnSync } from 'node:child_process';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const uid = process.getuid();
 const launchAgentsDir = path.join(os.homedir(), 'Library', 'LaunchAgents');
-const labelPrefix = process.env.LAUNCHD_LABEL_PREFIX || 'com.feishu-idea-catcher';
 const nodeBin = process.env.LAUNCHD_NODE_BIN || process.execPath;
-
 const services = [
   {
     name: 'listener',
-    label: `${labelPrefix}.listener`,
+    label: 'com.feishu-idea-catcher.listener',
     script: path.join(root, 'scripts', 'feishu-ws-worker.mjs'),
     outPath: path.join(root, 'state', 'launchd-listener.out.log'),
     errPath: path.join(root, 'state', 'launchd-listener.err.log')
   },
   {
     name: 'worker',
-    label: `${labelPrefix}.worker`,
+    label: 'com.feishu-idea-catcher.worker',
     script: path.join(root, 'scripts', 'worker.mjs'),
     outPath: path.join(root, 'state', 'launchd-worker.out.log'),
     errPath: path.join(root, 'state', 'launchd-worker.err.log')
@@ -103,6 +101,22 @@ function ensureInstalled() {
   }
 }
 
+function ensureInstallForStart(service) {
+  const file = plistPath(service);
+  if (fs.existsSync(file)) return { installed: true, plist: file };
+  try {
+    ensureInstalled();
+    return { installed: true, plist: file, created: true };
+  } catch (error) {
+    return {
+      installed: false,
+      plist: file,
+      error: error?.message || String(error),
+      hint: 'Run `npm run launchd:install` once from an interactive terminal or an approved elevated session.'
+    };
+  }
+}
+
 function bootout(service) {
   return run('launchctl', ['bootout', `gui/${uid}/${service.label}`]);
 }
@@ -135,13 +149,17 @@ function summarizePrint(service, result) {
 }
 
 function start() {
-  ensureInstalled();
   const results = [];
   for (const service of services) {
+    const install = ensureInstallForStart(service);
+    if (!install.installed) {
+      results.push({ name: service.name, label: service.label, install });
+      continue;
+    }
     bootout(service);
     const boot = bootstrap(service);
     const kick = kickstart(service);
-    results.push({ name: service.name, label: service.label, plist: plistPath(service), bootstrap: boot, kickstart: kick });
+    results.push({ name: service.name, label: service.label, plist: plistPath(service), install, bootstrap: boot, kickstart: kick });
   }
   return results;
 }

@@ -412,6 +412,7 @@ npm run worker:queue
 如果要让 Codex 自动化、系统定时任务或其他调度器每天自动启动/停止，推荐使用项目内置的 launchd 包装命令：
 
 ```bash
+npm run launchd:install
 npm run launchd:start
 npm run launchd:status
 npm run launchd:stop
@@ -435,6 +436,34 @@ state/launchd-worker.out.log
 state/launchd-worker.err.log
 ```
 
+如果要每天自动启动和停止，不要让 Codex 自动化直接执行 `launchd:start` / `launchd:stop`。某些自动化运行环境没有 `launchctl bootstrap` 所需权限。推荐改为安装真正的 macOS 定时 LaunchAgent：
+
+```bash
+npm run launchd:schedule:install
+npm run launchd:schedule:status
+```
+
+默认定时：
+
+```text
+06:00 start
+00:00 stop
+```
+
+安装后会新增：
+
+```text
+~/Library/LaunchAgents/com.feishu-idea-catcher.schedule-start.plist
+~/Library/LaunchAgents/com.feishu-idea-catcher.schedule-stop.plist
+```
+
+Codex 自动化适合做结果检查，而不是直接启动/停止：
+
+```text
+早上检查：运行 npm run launchd:status 和 npm run launchd:schedule:status，报告 listener/worker 是否 running。
+晚上检查：运行 npm run launchd:status 和 npm run launchd:schedule:status，报告 listener/worker 是否 stopped/not_loaded。
+```
+
 如果同一台 Mac 上有多个项目副本，可以用环境变量换一个 label 前缀，避免 LaunchAgent 名称冲突：
 
 ```bash
@@ -445,14 +474,6 @@ LAUNCHD_LABEL_PREFIX=com.example.my-idea-catcher npm run launchd:start
 
 ```bash
 LAUNCHD_NODE_BIN=/opt/homebrew/bin/node npm run launchd:start
-```
-
-Codex 自动化可以配置为：
-
-```text
-每天早上启动：运行 npm run launchd:start，等待 5 秒，再运行 npm run launchd:status，并总结 listener/worker 状态和 PID。
-
-每天晚上停止：运行 npm run launchd:stop，等待 3 秒，再运行 npm run launchd:status，并总结是否已经 not_loaded/stopped。
 ```
 
 `local:start` / `local:stop` / `local:status` 也保留给普通终端手动调试使用，但定时自动化更推荐 `launchd:*`。

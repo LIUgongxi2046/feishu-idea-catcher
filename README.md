@@ -87,6 +87,7 @@ Now send a text message to your Feishu bot.
 If you want Codex automations or another scheduler to start and stop the local processes, prefer the macOS launchd commands:
 
 ```bash
+npm run launchd:install
 npm run launchd:start
 npm run launchd:status
 npm run launchd:stop
@@ -94,11 +95,18 @@ npm run launchd:stop
 
 This registers the listener and queue worker as user LaunchAgents under `~/Library/LaunchAgents/`, with logs in `state/launchd-*.log`. This is more reliable than letting a sandboxed scheduler directly spawn long-running network processes.
 
-For Codex automations, use prompts like:
+For fully automatic daily startup and shutdown on macOS, install the schedule agents:
+
+```bash
+npm run launchd:schedule:install
+npm run launchd:schedule:status
+```
+
+The default schedule is 06:00 start and 00:00 stop. If you also use Codex automations, use them only to check and summarize results:
 
 ```text
-Start: run npm run launchd:start, wait 5 seconds, then run npm run launchd:status and summarize listener/worker status and PIDs.
-Stop: run npm run launchd:stop, wait 3 seconds, then run npm run launchd:status and summarize whether services are not_loaded/stopped.
+Morning check: run npm run launchd:status and npm run launchd:schedule:status, then summarize listener/worker status and PIDs.
+Night check: run npm run launchd:status and npm run launchd:schedule:status, then summarize whether services are not_loaded/stopped.
 ```
 
 If you need to avoid LaunchAgent label conflicts with another checkout, set `LAUNCHD_LABEL_PREFIX` before running the command.
