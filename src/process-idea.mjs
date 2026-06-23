@@ -79,7 +79,7 @@ export async function processIdea(idea) {
     outputPath: path.join(assetsDir, `${baseName}-whiteboard.png`),
     ideaId: idea.id
   });
-  const markdownWithImage = insertHeroImage(markdown, imageResult.imagePath, imageResult.error);
+  const markdownWithImage = insertHeroImage(markdown, imageResult.imagePath, imageResult.error, markdownPath);
   writeMarkdown(markdownPath, markdownWithImage);
   logLine('markdown_written', { id: idea.id, markdownPath });
   const openUri = obsidianOpenUri(markdownPath);
@@ -134,13 +134,16 @@ export async function processIdea(idea) {
   };
 }
 
-function insertHeroImage(markdown, imagePath, imageError = '') {
+function insertHeroImage(markdown, imagePath, imageError = '', markdownPath = '') {
   if (!imagePath) {
     const note = imageError ? `\n\n> 白板图生成失败：${imageError}\n` : '';
     return `${markdown}${note}`;
   }
   const lines = String(markdown || '').split(/\r?\n/);
-  const imageBlock = ['', `![白板图](${imagePath})`, ''];
+  const imageReference = markdownPath
+    ? path.relative(path.dirname(markdownPath), imagePath).replace(/\\/g, '/')
+    : imagePath;
+  const imageBlock = ['', `![白板图](${imageReference})`, ''];
   if (lines[0]?.startsWith('# ')) {
     return [lines[0], ...imageBlock, ...lines.slice(1)].join('\n');
   }

@@ -40,6 +40,17 @@ export function ideaDisplayTitle(text, maxLength = 14) {
     return compact.includes('学习') ? '诊断思维训练' : '诊断思维图谱';
   }
 
+  if (
+    /医学/.test(compact)
+    && /知识/.test(compact)
+    && /数据/.test(compact)
+    && /模型/.test(compact)
+    && /测评|评测/.test(compact)
+    && /汇聚|聚合|整合/.test(compact)
+  ) {
+    return '医学AI资产汇聚与评测平台';
+  }
+
   const keywords = [
     '诊断思维', '病例学习', '病历学习', '病历整理', '病例整理', '临床推理', '医学学习',
     '竞品分析', '灵感评审', '知识图谱', '工作流', '自动化', '复盘', '训练'
